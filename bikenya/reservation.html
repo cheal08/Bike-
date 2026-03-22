@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ride A Pedal - Reservation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+    body{min-height:100vh;background:linear-gradient(to bottom,#c5973c,#6b3e1f);padding-bottom:60px;}
+    .navbar{display:flex;justify-content:space-between;align-items:center;padding:18px 50px; background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(255,255,255,0.15);position:relative;}
+
+    .logo{font-size:20px;font-weight:700;color:white;letter-spacing:2px;text-transform:uppercase;flex-shrink:0;}
+    .nav-center{position:absolute;left:50%;transform:translateX(-50%);display:flex;}
+    .nav-links{list-style:none;display:flex;gap:30px;margin:0;}
+    .nav-links a{text-decoration:none;color:rgba(255,255,255,0.85);font-weight:400;font-size:14px;letter-spacing:0.5px;transition:color 0.25s;}
+    .nav-links a:hover{color:white;}
+    .nav-links a.active{color:rgb(0,0,0); font-weight: bold; padding-bottom:2px;}
+    .logout-btn-nav{padding:8px 22px;background:rgba(255,255,255,0.15);color:white; border:1px solid rgba(255,255,255,0.4);border-radius:25px;cursor:pointer;
+      font-weight:600;font-size:13px;letter-spacing:0.5px;transition:all 0.25s;font-family:'Poppins',sans-serif;}
+    .logout-btn-nav:hover{background:white;color:#2b1a0f;}
+    @media(max-width:900px){.navbar{flex-wrap:wrap;gap:10px;padding:15px 20px;}
+      .nav-center{position:static;transform:none;}
+      .nav-links{gap:12px;flex-wrap:wrap;}.nav-links a{font-size:12px;}}
+
+    .container{width:95%;max-width:1100px;margin:auto;}
+    h2{text-align:center;margin:30px 0;color:white;font-size:32px;}
+    .steps{display:flex;justify-content:center;align-items:center;margin:30px auto 10px;max-width:500px;}
+    .step{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;}
+    .step-num{width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,0.25);color:white; font-weight:700;font-size:14px;display:flex;align-items:center;justify-content:center;
+      border:2px solid rgba(255,255,255,0.4);transition:.3s;}
+    .step-num.active{background:#ffd700;color:#1a0f08;border-color:#ffd700;}
+    .step-num.done{background:#28a745;color:white;border-color:#28a745;}
+    .step-label{font-size:11px;color:rgba(255,255,255,0.75);font-weight:500;text-align:center;}
+    .step-line{flex:1;height:2px;background:rgba(255,255,255,0.25);margin-bottom:20px;}
+    .step-line.done{background:#28a745;}
+    .bike-list{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:25px;}
+    .bike-card{background:rgba(255,255,255,0.2);backdrop-filter:blur(15px);padding:30px; border-radius:30px;text-align:center;color:white;cursor:pointer;transition:.3s;border:1px solid rgba(255,255,255,0.2);}
+    .bike-card:hover{transform:translateY(-10px);background:rgba(255,255,255,0.3);}
+    .bike-card h3{color:#000;margin-bottom:10px;font-size:28px;font-weight:700;}
+    .bike-card p{font-size:14px;color:rgba(255,255,255,0.85);margin-bottom:8px;}
+    .bike-price{font-size:22px;font-weight:700;color:#ffd700;margin:10px 0;}
+    .available{background:#c99d0c;color:#1a0f08;padding:5px 15px;border-radius:20px;font-weight:700;display:inline-block;margin-top:10px;font-size:13px;}
+    .form-section{display:none;background:rgba(255,255,255,0.15);backdrop-filter:blur(15px); padding:40px;border-radius:40px;border:1px solid rgba(255,255,255,0.2);max-width:620px;margin:auto;color:white;}
+    .form-section h2{margin:0 0 25px;font-size:26px;}
+    .form-group{margin-bottom:18px;}
+    .form-group label{display:block;margin-bottom:7px;font-weight:600;color:#ffe0a0;font-size:14px;}
+    .form-group input,.form-group select{width:100%;padding:12px 14px;border-radius:12px; border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.25);
+      color:white;outline:none;font-size:14px;font-family:'Poppins',sans-serif;}
+    .form-group input::placeholder{color:rgba(255,255,255,0.45);}
+    .form-group input[readonly]{background:rgba(0,0,0,0.15);color:#ffd700;font-weight:600;cursor:default;}
+    .form-group select option{background:#5a3200;color:white;}
+
+    .hours-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px;}
+    .hour-opt{background:rgba(0,0,0,0.25);border:2px solid rgba(255,255,255,0.2);border-radius:12px;
+      padding:12px 6px;text-align:center;cursor:pointer;transition:.25s;color:white;font-weight:600;font-size:15px;}
+    .hour-opt:hover{background:rgba(255,255,255,0.15);border-color:rgba(255,255,255,0.5);}
+    .hour-opt.selected{border-color:#ffd700;background:rgba(255,215,0,0.18);color:#ffd700;}
+    .hour-opt span{display:block;font-size:10px;font-weight:400;color:rgba(255,255,255,0.6);margin-top:2px;}
+    .hour-opt.selected span{color:rgba(255,215,0,0.7);}
+
+    .payment-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px;}
+    .pay-opt {
+      background: url('images/gcash.png') no-repeat center center;
+      background-size: cover;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 14px;
+      padding: 16px 10px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: .25s;
+      color: white;
+      min-height: 90px;
+    }
+    .pay-opt:hover { transform: translateY(-5px); }
+    .pay-opt.selected { border-color: #ffd700; outline: 1px solid #ffd700; }
+
+    .pay-opt1 {
+      background: url('images/paymaya.png') no-repeat center center;
+      background-size: cover;
+      border: 2px solid rgba(255,255,255,0.2);
+      border-radius: 14px;
+      padding: 16px 10px 12px;
+      text-align: center;
+      cursor: pointer;
+      transition: .25s;
+      color: white;
+      min-height: 90px;
+    }
+    .pay-opt1:hover { transform: translateY(-5px); }
+    .pay-opt1.selected { border-color: #ffd700; outline: 1px solid #ffd700; }
+
+    .pay-number-wrap{margin-top:12px;display:none;}
+    .pay-number-wrap label{display:block;margin-bottom:6px;font-weight:600;color:#ffe0a0;font-size:13px;}
+    .pay-number-wrap input{width:100%;padding:11px 14px;border-radius:12px; border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.25);
+      color:white;outline:none;font-size:14px;font-family:'Poppins',sans-serif;}
+    .pay-number-wrap input::placeholder{color:rgba(255,255,255,0.4);}
+    .pay-number-wrap input:focus{border-color:#ffd700;}
+    .submit-btn{width:100%;padding:15px;border-radius:30px;border:none; background:#ffd700;color:#1a0f08;font-weight:700;font-size:16px;
+      cursor:pointer;transition:.3s;margin-top:10px;font-family:'Poppins',sans-serif;}
+    .submit-btn:hover{background:white;transform:scale(1.02);}
+    .submit-btn:disabled{opacity:.65;cursor:not-allowed;transform:none;}
+    .back-btn{background:none;border:none;color:rgba(255,255,255,0.75); cursor:pointer;display:block;margin:16px auto 0;font-size:13px;font-family:'Poppins',sans-serif;}
+    .back-btn:hover{color:white;}
+    #resError{color:#ffcccc;font-size:13px;text-align:center;margin-bottom:12px;display:none; font-weight:600;background:rgba(200,0,0,0.15);padding:10px;border-radius:10px;}
+    .modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.65);backdrop-filter:blur(4px); z-index:9000;display:none;justify-content:center;align-items:center;padding:20px;overflow-y:auto;}
+    .modal-bg.show{display:flex;animation:fadeIn .25s ease;}
+    @keyframes fadeIn{from{opacity:0;}to{opacity:1;}}
+    .receipt{background:#fffdf6;border-radius:24px;max-width:440px;width:100%;
+      box-shadow:0 30px 80px rgba(0,0,0,0.35);animation:popUp .4s cubic-bezier(.34,1.56,.64,1) both;overflow:hidden;}
+    @keyframes popUp{from{transform:scale(.85);opacity:0;}to{transform:scale(1);opacity:1;}}
+    .receipt-header{background:linear-gradient(135deg,#e6b85c,#8b4d1d);padding:24px 30px;text-align:center;color:white;}
+    .receipt-header h2{font-size:20px;letter-spacing:1px;margin-bottom:3px;}
+    .receipt-header p{font-size:12px;opacity:.85;}
+    .receipt-body{padding:22px 30px;}
+    .receipt-txn{text-align:center;margin-bottom:16px;}
+    .receipt-txn .txn-label{font-size:11px;color:#999;font-weight:600;text-transform:uppercase;letter-spacing:1px;}
+    .receipt-txn .txn-val{font-size:20px;font-weight:700;color:#8b4d1d;font-family:monospace;margin-top:3px;}
+    .receipt-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px dashed #e8e0d0;font-size:13px;}
+    .receipt-row:last-of-type{border-bottom:none;}
+    .receipt-row .r-label{color:#888;font-weight:500;}
+    .receipt-row .r-val{color:#333;font-weight:600;text-align:right;max-width:60%;}
+    .receipt-amount{background:#fff8e1;border-radius:12px;padding:12px 16px;
+      display:flex;justify-content:space-between;align-items:center;margin:14px 0;}
+    .receipt-amount .amt-label{font-weight:600;color:#555;font-size:14px;}
+    .receipt-amount .amt-val{font-size:22px;font-weight:700;color:#8b4d1d;}
+    .qr-section{text-align:center;padding:14px 0 6px;}
+    .qr-section p{font-size:12px;color:#999;margin-bottom:10px;}
+    #qrCode{display:inline-block;}
+    #qrCode canvas,#qrCode img{border-radius:10px;border:4px solid #f0e8d0;}
+    .receipt-footer{padding:16px 30px 22px;display:flex;gap:10px;flex-wrap:wrap;}
+    .btn-save-qr{flex:1;padding:11px;border-radius:20px;border:none;background:#8b4d1d;color:white;
+      font-weight:700;cursor:pointer;font-size:13px;transition:.25s;font-family:'Poppins',sans-serif;}
+    .btn-save-qr:hover{background:#6b3a14;}
+    .btn-done{flex:1;padding:11px;border-radius:20px;border:2px solid #8b4d1d;background:transparent;
+      color:#8b4d1d;font-weight:700;cursor:pointer;font-size:13px;transition:.25s;font-family:'Poppins',sans-serif;}
+    .btn-done:hover{background:#8b4d1d;color:white;}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">Ride A Pedal</div>
+    <div class="nav-center">
+      <ul class="nav-links">
+        <li><a href="dashboard.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="reservation.html" class="active">Reservation</a></li>
+        <li><a href="Profile.html">Profile</a></li>
+        <li><a href="support.html">Support</a></li>
+      </ul>
+    </div>
+    <button class="logout-btn-nav" id="logoutBtn">Log out</button>
+  </nav>
+
+  <div class="container">
+
+    <div class="steps">
+      <div class="step"><div class="step-num active" id="s1">1</div><div class="step-label">Choose Bike</div></div>
+      <div class="step-line" id="line1"></div>
+      <div class="step"><div class="step-num" id="s2">2</div><div class="step-label">Your Details</div></div>
+      <div class="step-line" id="line2"></div>
+      <div class="step"><div class="step-num" id="s3">3</div><div class="step-label">Receipt</div></div>
+    </div>
+
+    <section id="bikeSection">
+      <h2>Select Your Bike</h2>
+      <div class="bike-list">
+        <div class="bike-card" onclick="openForm('LUNTIAN 2.0 Touring Bike')">
+          <h3>LUNTIAN 2.0</h3>
+          <p>Touring Bike — Ideal for long scenic routes through Intramuros.</p>
+          <div class="bike-price">₱200 / hour</div>
+          <div class="available">2 Available</div>
+        </div>
+        <div class="bike-card" onclick="openForm('Victoria 2.0 Touring Bike')">
+          <h3>Victoria 2.0</h3>
+          <p>Stylish classic bike for relaxed historical touring.</p>
+          <div class="bike-price">₱200 / hour</div>
+          <div class="available">3 Available</div>
+        </div>
+        <div class="bike-card" onclick="openForm('Ligtasin Cove 2.1 Beach Cruiser')">
+          <h3>Ligtasin Cove 2.1</h3>
+          <p>Smooth beach cruiser for leisure and coastal paths.</p>
+          <div class="bike-price">₱200 / hour</div>
+          <div class="available">3 Available</div>
+        </div>
+      </div>
+    </section>
+
+    <section class="form-section" id="formSection">
+      <h2 style="color:white;text-align:center;">Reservation Details</h2>
+      <div id="resError"></div>
+      <form id="resForm">
+
+        <div class="form-group">
+          <label>Selected Bike</label>
+          <input type="text" id="selectedBike" readonly>
+        </div>
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" id="riderName" placeholder="Your full name" required>
+        </div>
+        <div class="form-group">
+          <label>Date of Ride</label>
+          <input type="date" id="rideDate" required>
+        </div>
+        <div class="form-group">
+          <label>Preferred Time</label>
+          <select id="rideTime" required>
+            <option value="">Choose time...</option>
+            <option>08:00 AM</option>
+            <option>09:00 AM</option>
+            <option>10:00 AM</option>
+            <option>11:00 AM</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Number of Hours <span style="font-weight:400;color:rgba(255,255,255,0.55);font-size:12px;">(₱200 / hour · max 4 hrs)</span></label>
+          <div class="hours-grid">
+            <div class="hour-opt" onclick="selectHours(1)">1<span>hr</span></div>
+            <div class="hour-opt" onclick="selectHours(2)">2<span>hrs</span></div>
+            <div class="hour-opt" onclick="selectHours(3)">3<span>hrs</span></div>
+            <div class="hour-opt" onclick="selectHours(4)">4<span>hrs</span></div>
+          </div>
+          <input type="hidden" id="selectedHoursInput">
+        </div>
+
+        <div class="form-group">
+          <label>Payment Method</label>
+          <div class="payment-grid">
+            <div class="pay-opt" id="payGcash" onclick="selectPayment('GCash','payGcash')"></div>
+            <div class="pay-opt1" id="payMaya" onclick="selectPayment('Maya','payMaya')"></div>
+          </div>
+          <input type="hidden" id="paymentMethod">
+          <div class="pay-number-wrap" id="payNumberWrap">
+            <label id="payNumberLabel">GCash Number</label>
+            <input type="tel" id="paymentNumber" placeholder="e.g. 09xxxxxxxxx" maxlength="11">
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label>Total Amount</label>
+          <input type="text" id="totalAmount" readonly placeholder="Select hours to calculate">
+        </div>
+
+        <button type="submit" class="submit-btn" id="resBtn">Confirm Reservation</button>
+      </form>
+      <button class="back-btn" onclick="goBack()">← Choose a different bike</button>
+    </section>
+
+  </div>
+
+  <!-- Receipt Modal -->
+  <div class="modal-bg" id="receiptModal">
+    <div class="receipt">
+      <div class="receipt-header">
+        <h2>🚲 Ride A Pedal</h2>
+        <p>Booking Confirmed!</p>
+      </div>
+      <div class="receipt-body">
+        <div class="receipt-txn">
+          <div class="txn-label">Transaction ID</div>
+          <div class="txn-val" id="rTxnId">—</div>
+        </div>
+        <div class="receipt-row"><span class="r-label">Name</span><span class="r-val" id="rName">—</span></div>
+        <div class="receipt-row"><span class="r-label">Bike</span><span class="r-val" id="rBike">—</span></div>
+        <div class="receipt-row"><span class="r-label">Date</span><span class="r-val" id="rDate">—</span></div>
+        <div class="receipt-row"><span class="r-label">Time</span><span class="r-val" id="rTime">—</span></div>
+        <div class="receipt-row"><span class="r-label">Duration</span><span class="r-val" id="rHours">—</span></div>
+        <div class="receipt-row"><span class="r-label">Return Time</span><span class="r-val" id="rReturn">—</span></div>
+        <div class="receipt-row"><span class="r-label">Payment</span><span class="r-val" id="rPayment">—</span></div>
+        <div class="receipt-row"><span class="r-label">Ref. Number</span><span class="r-val" id="rPayNum">—</span></div>
+        <div class="receipt-row"><span class="r-label">Status</span><span class="r-val" style="color:#28a745;font-weight:700;">✅ Confirmed</span></div>
+        <div class="receipt-amount">
+          <span class="amt-label">Amount</span>
+          <span class="amt-val" id="rAmount">—</span>
+        </div>
+        <div class="qr-section">
+          <p>Scan at pickup for verification</p>
+          <div id="qrCode"></div>
+        </div>
+      </div>
+      <div class="receipt-footer">
+        <button class="btn-save-qr" onclick="saveQR()">💾 Save QR Code</button>
+        <button class="btn-done" onclick="closeReceipt()">Done</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const RATE_PER_HOUR = 200;
+    let selectedHours   = 0;
+    let selectedPayment = '';
+
+    function setStep(n){
+      [1,2,3].forEach(i=>{
+        const el = document.getElementById('s'+i);
+        el.classList.remove('active','done');
+        if(i < n) el.classList.add('done');
+        else if(i === n) el.classList.add('active');
+      });
+      [1,2].forEach(i=>{
+        document.getElementById('line'+i).classList.toggle('done', i < n);
+      });
+    }
+
+    function openForm(bikeName){
+      document.getElementById('selectedBike').value = bikeName;
+      document.getElementById('rideDate').min       = new Date().toISOString().split('T')[0];
+      document.getElementById('bikeSection').style.display = 'none';
+      document.getElementById('formSection').style.display = 'block';
+
+      selectedHours = 0;
+      document.getElementById('selectedHoursInput').value = '';
+      document.getElementById('totalAmount').value = '';
+      document.querySelectorAll('.hour-opt').forEach(e => e.classList.remove('selected'));
+
+      selectedPayment = '';
+      document.getElementById('paymentMethod').value = '';
+      document.querySelectorAll('.pay-opt, .pay-opt1').forEach(e => e.classList.remove('selected'));
+      document.getElementById('payNumberWrap').style.display = 'none';
+      document.getElementById('paymentNumber').value = '';
+
+      setStep(2);
+      window.scrollTo(0, 0);
+    }
+
+    function selectHours(hrs){
+      selectedHours = hrs;
+      document.getElementById('selectedHoursInput').value = hrs;
+      document.querySelectorAll('.hour-opt').forEach(e => e.classList.remove('selected'));
+      document.querySelectorAll('.hour-opt')[hrs - 1].classList.add('selected');
+      const total = RATE_PER_HOUR * hrs;
+      document.getElementById('totalAmount').value = '₱' + total.toLocaleString('en-PH') + '.00';
+    }
+
+    function goBack(){
+      document.getElementById('formSection').style.display = 'none';
+      document.getElementById('bikeSection').style.display = 'block';
+      setStep(1);
+    }
+
+    function selectPayment(method, id){
+      document.querySelectorAll('.pay-opt, .pay-opt1').forEach(e => e.classList.remove('selected'));
+      document.getElementById(id).classList.add('selected');
+      selectedPayment = method;
+      document.getElementById('paymentMethod').value = method;
+      const wrap  = document.getElementById('payNumberWrap');
+      const label = document.getElementById('payNumberLabel');
+      label.textContent = method + ' Number';
+      wrap.style.display = 'block';
+      document.getElementById('paymentNumber').placeholder = method === 'GCash' ? 'e.g. 09xxxxxxxxx' : 'Maya account number';
+      document.getElementById('paymentNumber').focus();
+    }
+
+    // ── Return Time Calculator ──────────────────────────────────────
+    function calculateReturnTime(timeStr, hours) {
+      const [time, meridiem] = timeStr.split(' ');
+      let [h, m] = time.split(':').map(Number);
+      if (meridiem === 'PM' && h !== 12) h += 12;
+      if (meridiem === 'AM' && h === 12) h = 0;
+      const totalMinutes = h * 60 + m + (hours * 60);
+      let returnH = Math.floor(totalMinutes / 60) % 24;
+      let returnM = totalMinutes % 60;
+      const returnMeridiem = returnH >= 12 ? 'PM' : 'AM';
+      if (returnH > 12) returnH -= 12;
+      if (returnH === 0) returnH = 12;
+      return returnH.toString().padStart(2, '0') + ':' + returnM.toString().padStart(2, '0') + ' ' + returnMeridiem;
+    }
+    // ───────────────────────────────────────────────────────────────
+
+    document.getElementById('resForm').addEventListener('submit', async e => {
+      e.preventDefault();
+      const btn   = document.getElementById('resBtn');
+      const errEl = document.getElementById('resError');
+      errEl.style.display = 'none';
+
+      if(!selectedHours){
+        errEl.textContent = '❌ Please select the number of hours.';
+        errEl.style.display = 'block'; return;
+      }
+      if(!selectedPayment){
+        errEl.textContent = '❌ Please select a payment method.';
+        errEl.style.display = 'block'; return;
+      }
+      const payNum = document.getElementById('paymentNumber').value.trim();
+      if(!payNum){
+        errEl.textContent = '❌ Please enter your ' + selectedPayment + ' number.';
+        errEl.style.display = 'block'; return;
+      }
+
+      btn.disabled = true; btn.textContent = 'Processing...';
+
+      const totalAmount = RATE_PER_HOUR * selectedHours;
+
+      const form = new FormData();
+      form.append('bike_name',      document.getElementById('selectedBike').value);
+      form.append('ride_date',      document.getElementById('rideDate').value);
+      form.append('ride_time',      document.getElementById('rideTime').value);
+      form.append('return_time',    calculateReturnTime(document.getElementById('rideTime').value, selectedHours));
+      form.append('hours',          selectedHours);
+      form.append('amount',         totalAmount); 
+      form.append('payment_method', selectedPayment);
+      form.append('payment_number', payNum);
+      form.append('rider_name',     document.getElementById('riderName').value);
+    
+
+      try{
+        const res  = await fetch('reserve.php', {method:'POST', body:form});
+        const data = await res.json();
+        if(data.success){
+          showReceipt(data, payNum, totalAmount);
+          setStep(3);
+        } else {
+          if(data.redirect){ window.location.href = data.redirect; return; }
+          errEl.textContent = '❌ ' + data.message;
+          errEl.style.display = 'block';
+        }
+      } catch(err){
+        errEl.textContent = '❌ Connection error. Is the PHP server running?';
+        errEl.style.display = 'block';
+      }
+      btn.disabled = false; btn.textContent = 'Confirm Reservation';
+    });
+
+    function showReceipt(data, payNum, totalAmount){
+      document.getElementById('rTxnId').textContent   = data.transaction_id;
+      document.getElementById('rName').textContent    = data.rider_name;
+      document.getElementById('rBike').textContent    = data.bike_name;
+      document.getElementById('rDate').textContent    = formatDate(data.ride_date);
+      document.getElementById('rTime').textContent    = data.ride_time;
+      document.getElementById('rHours').textContent   = data.hours + (data.hours == 1 ? ' hour' : ' hours');
+      document.getElementById('rReturn').textContent  = calculateReturnTime(data.ride_time, parseInt(data.hours));
+      document.getElementById('rPayment').textContent = data.payment_method;
+      document.getElementById('rPayNum').textContent  = payNum;
+      document.getElementById('rAmount').textContent  = '₱' + parseFloat(totalAmount).toLocaleString('en-PH',{minimumFractionDigits:2});
+
+      const qrEl = document.getElementById('qrCode');
+      qrEl.innerHTML = '';
+      const qrData = [
+        'RIDE A PEDAL',
+        'TXN: '         + data.transaction_id,
+        'Name: '        + data.rider_name,
+        'Bike: '        + data.bike_name,
+        'Date: '        + formatDate(data.ride_date),
+        'Time: '        + data.ride_time,
+        'Duration: '    + data.hours + (data.hours == 1 ? ' hour' : ' hours'),
+        'Return Time: ' + calculateReturnTime(data.ride_time, parseInt(data.hours)),
+        'Payment: '     + data.payment_method,  
+        'Ref#: '        + payNum,
+        'Amount: PHP '  + parseFloat(totalAmount).toFixed(2)
+      ].join('\n');
+
+      new QRCode(qrEl,{
+        text:         qrData,
+        width:        160,
+        height:       160,
+        colorDark:    '#5a2d00',
+        colorLight:   '#fffdf6',
+        correctLevel: QRCode.CorrectLevel.M
+      });
+
+      document.getElementById('receiptModal').classList.add('show');
+    }
+
+    function saveQR(){
+      setTimeout(()=>{
+        const canvas = document.querySelector('#qrCode canvas');
+        if(!canvas){ alert('QR not ready yet, please wait a moment.'); return; }
+
+        const pad = 20;
+        const out = document.createElement('canvas');
+        out.width  = canvas.width  + pad * 2;
+        out.height = canvas.height + pad * 2;
+        const ctx  = out.getContext('2d');
+
+        ctx.fillStyle = '#fffdf6';
+        ctx.fillRect(0, 0, out.width, out.height);
+        ctx.drawImage(canvas, pad, pad);
+
+        ctx.fillStyle = '#8b4d1d';
+        ctx.font = 'bold 11px sans-serif';
+        ctx.textAlign = 'center';
+        const txn = document.getElementById('rTxnId').textContent;
+        ctx.fillText('Ride A Pedal · ' + txn, out.width / 2, out.height - 6);
+
+        const link = document.createElement('a');
+        link.download = 'RideAPedal_QR_' + txn.replace('#','') + '.png';
+        link.href = out.toDataURL('image/png');
+        link.click();
+      }, 300);
+    }
+
+    function closeReceipt(){
+      document.getElementById('receiptModal').classList.remove('show');
+      document.getElementById('resForm').reset();
+      document.querySelectorAll('.pay-opt, .pay-opt1').forEach(e => e.classList.remove('selected'));
+      document.querySelectorAll('.hour-opt').forEach(e => e.classList.remove('selected'));
+      document.getElementById('payNumberWrap').style.display = 'none';
+      document.getElementById('totalAmount').value = '';
+      selectedPayment = '';
+      selectedHours   = 0;
+      document.getElementById('formSection').style.display = 'none';
+      document.getElementById('bikeSection').style.display = 'block';
+      setStep(1);
+    }
+
+    function formatDate(d){
+      return new Date(d+'T00:00:00').toLocaleDateString('en-PH',{year:'numeric',month:'long',day:'numeric'});
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click', async ()=>{
+      try{ await fetch('logout.php'); }catch(e){}
+      localStorage.clear(); sessionStorage.clear();
+      window.location.href = 'main.html';
+    });
+  </script>
+</body>
+</html>

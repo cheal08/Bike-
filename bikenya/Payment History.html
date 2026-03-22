@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ride A Pedal - Payment History</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+    body { min-height: 100vh; background: linear-gradient(to bottom, #e6b85c, #6b3e1f); padding-bottom: 50px; color: white; }
+    .navbar { display: flex; justify-content: space-between; align-items: center; padding: 15px 50px; background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(10px); border-bottom: 1px solid rgba(255,255,255,0.3); }
+
+    .logo { font-size: 28px; font-weight: 700; }
+    .nav-links { list-style: none; display: flex; gap: 20px; }
+    .nav-links a { text-decoration: none; color: white; font-weight: 500; transition: 0.3s; }
+    .nav-links a:hover { color: #2b1a0f; }
+    .container { width: 95%; max-width: 1100px; margin: 40px auto; }
+    .bike-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+    .bike-card { background: rgba(255,255,255,0.2); padding: 30px; border-radius: 30px; text-align: center; cursor: pointer; transition: 0.3s; border: 1px solid rgba(255,255,255,0.2); }
+    .bike-card:hover { transform: translateY(-5px); background: rgba(255,255,255,0.3); }
+    .bike-card h3 { color: #ffd700; margin-bottom: 10px; }
+    .price-tag { font-weight: 700; color: #fff; background: #1a0f08; padding: 5px 15px; border-radius: 20px; }
+    #formSection { display: none; background: rgba(255,255,255,0.2); padding: 40px; border-radius: 30px; max-width: 600px; margin: 0 auto; backdrop-filter: blur(15px); }
+    .form-group { margin-bottom: 15px; text-align: left; }
+    .form-group label { display: block; margin-bottom: 5px; color: #ffd700; font-weight: 500; }
+    .form-group input, .form-group select { width: 100%; padding: 12px; border-radius: 12px; border: none; background: rgba(0,0,0,0.3); color: white; }
+    .submit-btn { width: 100%; padding: 15px; background: #ffd700; border: none; border-radius: 25px; color: #1a0f08; font-weight: 700; cursor: pointer; margin-top: 10px; }
+    #paymentSection { display: none; background: rgba(255,255,255,0.2); padding: 30px; border-radius: 30px; margin-top: 20px; }
+    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+    th { background: rgba(0,0,0,0.4); padding: 15px; text-align: left; color: #ffd700; }
+    td { padding: 15px; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .status-paid { background: #28a745; padding: 4px 10px; border-radius: 10px; font-size: 12px; }
+    .btn-nav-view { margin-top: 20px; background: #1a0f08; color: white; border: none; padding: 10px 20px; border-radius: 20px; cursor: pointer; }
+
+    @media (max-width: 768px) { .navbar { flex-direction: column; gap: 10px; } }
+  </style>
+</head>
+<body>
+
+  <nav class="navbar">
+    <div class="logo">Ride A Pedal</div>
+    <ul class="nav-links">
+      <li><a href="#" onclick="showSection('bikeSection')">Bikes</a></li>
+      <li><a href="#" onclick="showSection('paymentSection')">Payment History</a></li>
+      <li><a href="dashboard.html">Dashboard</a></li>
+    </ul>
+    <button class="btn-nav-view" onclick="localStorage.clear(); location.reload();">Clear History</button>
+  </nav>
+
+  <div class="container">
+    
+    <section id="bikeSection">
+      <h2 style="text-align:center; margin-bottom:30px;">Choose Your Ride</h2>
+      <div class="bike-grid">
+        <div class="bike-card" onclick="selectBike('LUNTIAN 2.0', 450)">
+          <h3>LUNTIAN 2.0</h3>
+          <p>Touring Bike</p><br>
+          <span class="price-tag">₱450.00 / day</span>
+        </div>
+        <div class="bike-card" onclick="selectBike('Victoria 2.0', 500)">
+          <h3>Victoria 2.0</h3>
+          <p>Classic Historical</p><br>
+          <span class="price-tag">₱500.00 / day</span>
+        </div>
+        <div class="bike-card" onclick="selectBike('Ligtasin Cove', 400)">
+          <h3>Ligtasin Cove</h3>
+          <p>Beach Cruiser</p><br>
+          <span class="price-tag">₱400.00 / day</span>
+        </div>
+      </div>
+    </section>
+
+    <section id="formSection">
+      <h2 style="color:#ffd700;">Complete Reservation</h2>
+      <form id="resForm">
+        <div class="form-group">
+          <label>Selected Bike</label>
+          <input type="text" id="bikeInput" readonly style="border: 1px solid #ffd700;">
+        </div>
+        <div class="form-group">
+          <label>Your Name</label>
+          <input type="text" id="userName" placeholder="Juan Dela Cruz" required>
+        </div>
+        <div class="form-group">
+          <label>Date & Time</label>
+          <input type="datetime-local" id="dateTime" required>
+        </div>
+        <div class="form-group">
+          <label>Total Amount</label>
+          <input type="text" id="amountInput" readonly>
+        </div>
+        <button type="submit" class="submit-btn">Confirm & Pay via GCash</button>
+        <button type="button" class="back-btn" onclick="showSection('bikeSection')" style="background:none; border:none; color:white; margin-top:10px; cursor:pointer; text-decoration:underline;">Back to selection</button>
+      </form>
+    </section>
+
+    <section id="paymentSection">
+      <h2>Payment History</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Transaction ID</th>
+            <th>Name</th>
+            <th>Bike</th>
+            <th>Schedule</th>
+            <th>Amount</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody id="historyTableBody">
+          </tbody>
+      </table>
+    </section>
+
+  </div>
+
+  <script>
+    function showSection(sectionId) {
+      document.getElementById('bikeSection').style.display = 'none';
+      document.getElementById('formSection').style.display = 'none';
+      document.getElementById('paymentSection').style.display = 'none';
+      document.getElementById(sectionId).style.display = 'block';
+      if(sectionId === 'paymentSection') updateTable();
+    }
+
+    function selectBike(name, price) {
+      document.getElementById('bikeInput').value = name;
+      document.getElementById('amountInput').value = "₱" + price + ".00";
+      showSection('formSection');
+    }
+
+    document.getElementById('resForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const reservation = {
+        id: '#' + Math.random().toString(36).substr(2, 7).toUpperCase(),
+        name: document.getElementById('userName').value,
+        bike: document.getElementById('bikeInput').value,
+        date: document.getElementById('dateTime').value,
+        amount: document.getElementById('amountInput').value
+      };
+
+      let history = JSON.parse(localStorage.getItem('myPayments')) || [];
+      history.push(reservation);
+      localStorage.setItem('myPayments', JSON.stringify(history));
+
+      alert("Payment Successful! Your bike is now reserved.");
+      showSection('paymentSection');
+    });
+
+    function updateTable() {
+      const history = JSON.parse(localStorage.getItem('myPayments')) || [];
+      const tbody = document.getElementById('historyTableBody');
+      tbody.innerHTML = '';
+
+      if (history.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;">No transactions yet.</td></tr>';
+        return;
+      }
+
+      history.forEach(item => {
+        tbody.innerHTML += `
+          <tr>
+            <td style="color:#ffd700;">${item.id}</td>
+            <td>${item.name}</td>
+            <td>${item.bike}</td>
+            <td>${item.date.replace('T', ' ')}</td>
+            <td>${item.amount}</td>
+            <td><span class="status-paid">PAID</span></td>
+          </tr>
+        `;
+      });
+    }
+
+    showSection('bikeSection');
+  </script>
+
+</body>
+</html>

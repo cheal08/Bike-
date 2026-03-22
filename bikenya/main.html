@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ride A Pedal - Login</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+
+*{ margin:0; padding:0; box-sizing:border-box; font-family:'Poppins',sans-serif; }
+body{ display:flex; justify-content:center; align-items:center; min-height:100vh; background-color:#d6900ed2; overflow-x:hidden; }
+.top-title{ position:absolute; top:20px; left:50%; transform:translateX(-50%); text-align:center; white-space:nowrap; }
+.top-title h1{ font-family:'Pacifico',cursive; font-size:40px; color:#2b1a0f; letter-spacing:4px; text-shadow:2px 4px 10px rgba(0,0,0,0.4); }
+.top-title p{font-size:20px; color:#2b1a0f; letter-spacing:2px; }
+#toastContainer{ position:fixed; top:24px; left:50%; transform:translateX(-50%); z-index:9999; display:flex; flex-direction:column;
+align-items:center; gap:10px; pointer-events:none; width:340px; }
+
+.toast{ width:100%; padding:14px 18px; border-radius:12px; font-size:14px; font-weight:600; text-align:center; box-shadow:0 6px 24px rgba(0,0,0,0.18);
+pointer-events:auto; animation:toastIn 0.35s cubic-bezier(0.34,1.56,0.64,1) both; display:flex;align-items:center; gap:10px;
+justify-content:center; }
+.toast.removing{
+animation:toastOut 0.3s ease forwards;
+}
+.toast-error{
+background:#fff0f0;
+color:#b30000;
+border:1.5px solid #f5aaaa;
+}
+.toast-success{
+background:#f0fff4;
+color:#145214;
+border:1.5px solid #7dd87d;
+}
+.toast-info{
+background:#d6eaff;
+color:#0a4d8c;
+border:1.5px solid #7bbcf7;
+}
+@keyframes toastIn{
+from{ opacity:0; transform:translateY(-16px) scale(0.95); }
+to{   opacity:1; transform:translateY(0)      scale(1);    }
+}
+@keyframes toastOut{
+from{ opacity:1; transform:translateY(0)      scale(1);    }
+to{   opacity:0; transform:translateY(-12px)  scale(0.95); }
+}
+.modal-overlay{
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.45);
+backdrop-filter:blur(3px);
+z-index:8888;
+display:none;
+justify-content:center;
+align-items:center;
+}
+.modal-overlay.show{
+display:flex;
+animation:fadeIn 0.25s ease;
+}
+@keyframes fadeIn{
+from{ opacity:0; }
+to{   opacity:1; }
+}
+.modal-box{
+background:#fff;
+border-radius:20px;
+padding:40px 36px;
+max-width:340px;
+width:90%;
+text-align:center;
+box-shadow:0 20px 50px rgba(0,0,0,0.25);
+animation:popIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes popIn{
+from{ transform:scale(0.85); opacity:0; }
+to{   transform:scale(1);    opacity:1; }
+}
+.modal-icon{
+font-size:56px;
+margin-bottom:16px;
+}
+.modal-box h2{
+font-size:22px;
+color:#145214;
+margin-bottom:10px;
+}
+.modal-box p{
+font-size:14px;
+color:#555;
+margin-bottom:28px;
+line-height:1.6;
+}
+.modal-btn{
+padding:12px 36px;
+background:#bd6705;
+color:#fff;
+border:none;
+border-radius:30px;
+font-size:15px;
+font-weight:700;
+cursor:pointer;
+transition:0.2s;
+font-family:'Poppins',sans-serif;
+}
+.modal-btn:hover{ background:#946603; }
+.slide-container{
+width:320px;
+margin-top:60px;
+margin-bottom:20px;
+position:relative;
+}
+.wrapper{
+background:#c7babac2;
+width:320px;
+padding:25px;
+border-radius:12px;
+backdrop-filter:blur(5px);
+position:relative;
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+display:none;
+}
+.wrapper.active{
+display:block;
+animation:panelIn 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+@keyframes panelIn{
+from{ opacity:0; transform:scale(0.92) translateY(12px); }
+to{   opacity:1; transform:scale(1)    translateY(0);     }
+}
+.wrapper h1{
+text-align:center;
+margin-bottom:20px;
+color:rgb(139,74,0);
+}
+.input-group{
+position:relative;
+margin-bottom:20px;
+}
+.input-group i.icon-left{
+position:absolute;
+left:10px;
+top:12px;
+color:black;
+}
+.input-group input{
+width:100%;
+padding:12px 36px 12px 35px;
+border:none;
+border-bottom:1px solid black;
+outline:none;
+font-size:14px;
+background:transparent;
+}
+.input-group label{
+position:absolute;
+left:35px;
+top:12px;
+color:black;
+pointer-events:none;
+transition:0.3s;
+font-size:14px;
+}
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label{
+top:-15px;
+left:10px;
+font-size:12px;
+color:rgb(139,79,0);
+}
+.eye-icon{
+position:absolute;
+right:10px;
+top:12px;
+color:black;
+cursor:pointer;
+font-size:14px;
+background:none;
+border:none;
+padding:0;
+line-height:1;
+}
+.eye-icon:hover{ color:#bd6705; }
+.options{
+display:flex;
+justify-content:space-between;
+font-size:14px;
+margin-bottom:15px;
+}
+.options a{ color:#5a3a00; text-decoration:none; }
+.options a:hover{ text-decoration:underline; }
+
+.btn{
+width:100%;
+padding:12px;
+border:none;
+background:#bd6705;
+color:#fff;
+font-size:16px;
+border-radius:8px;
+cursor:pointer;
+transition:0.2s;
+}
+.btn:hover{ background:#946603; }
+.btn:disabled{ opacity:0.65; cursor:not-allowed; }
+.switch-link{
+text-align:center;
+font-size:13px;
+margin-top:12px;
+color:#5a3a00;
+}
+.switch-link a{ color:rgb(139,74,0); font-weight:700; text-decoration:none; }
+.switch-link a:hover{ text-decoration:underline; }
+.input-row{ display:flex; gap:10px; margin-bottom:0; }
+.input-row .input-group{ flex:1; min-width:0; }
+.code-row{ display:flex; gap:8px; margin-bottom:20px; }
+.code-row .input-group{ flex:1; min-width:0; margin-bottom:0; }
+.send-code-btn{
+flex-shrink:0;
+padding:0 14px;
+border:none;
+background:#bd6705;
+color:#fff;
+font-size:13px;
+font-weight:600;
+border-radius:8px;
+cursor:pointer;
+white-space:nowrap;
+font-family:'Poppins',sans-serif;
+line-height:1.2;
+min-width:64px;
+}
+.send-code-btn:hover{ background:#946603; }
+.send-code-btn:disabled{ opacity:0.65; cursor:not-allowed; }
+
+.resend-row{
+text-align:center;
+font-size:13px;
+margin-top:4px;
+margin-bottom:8px;
+color:#5a3a00;
+}
+.resend-row a{ color:rgb(139,74,0); font-weight:700; text-decoration:none; cursor:pointer; }
+.resend-row a:hover{ text-decoration:underline; }
+
+</style>
+</head>
+
+<body>
+
+<div id="toastContainer"></div>
+
+<div class="top-title">
+  <h1>Ride A Pedal</h1>
+  <p>Reservation</p>
+</div>
+
+<div class="slide-container">
+<div class="slide-track" id="slideTrack">
+
+  <div class="wrapper active" id="loginPanel">
+
+    <h1>𝐋𝐎𝐆 𝐈𝐍</h1>
+
+    <form id="loginForm">
+
+      <div class="input-group">
+        <i class="fas fa-envelope icon-left"></i>
+        <input type="email" id="emailLogin" placeholder=" " required>
+        <label>Email</label>
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-lock icon-left"></i>
+        <input type="password" id="passwordLogin" placeholder=" " required>
+        <label>Password</label>
+        <button type="button" class="eye-icon" onclick="toggleEye('passwordLogin','eyeLogin')">
+          <i class="fas fa-eye" id="eyeLogin"></i>
+        </button>
+      </div>
+
+      <div class="options">
+        <label><input type="checkbox" id="rememberMe"> Remember me</label>
+        <a href="#">Forgot Password?</a>
+      </div>
+
+      <button type="submit" class="btn" id="loginBtn">Log In</button>
+
+    </form>
+
+    <p class="switch-link">No account yet? <a href="#" onclick="goTo(1)">Sign Up</a></p>
+
+  </div>
+
+  <div class="wrapper" id="signupPanel">
+
+    <h1 style="font-size:22px;">𝐒𝐈𝐆𝐍 𝐔𝐏</h1>
+
+    <form id="signupForm">
+
+      <div class="input-row">
+        <div class="input-group">
+          <i class="fas fa-user icon-left"></i>
+          <input type="text" id="signupFirstName" placeholder=" " required>
+          <label>First Name</label>
+        </div>
+        <div class="input-group">
+          <i class="fas fa-user icon-left"></i>
+          <input type="text" id="signupLastName" placeholder=" " required>
+          <label>Last Name</label>
+        </div>
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-envelope icon-left"></i>
+        <input type="email" id="signupEmail" placeholder=" " required>
+        <label>Email</label>
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-lock icon-left"></i>
+        <input type="password" id="signupPassword" placeholder=" " required>
+        <label>Password</label>
+        <button type="button" class="eye-icon" onclick="toggleEye('signupPassword','eyeSignup')">
+          <i class="fas fa-eye" id="eyeSignup"></i>
+        </button>
+      </div>
+
+      <div class="input-group">
+        <i class="fas fa-phone icon-left"></i>
+        <input type="tel" id="signupPhone" placeholder=" ">
+        <label>Phone</label>
+      </div>
+
+      <div class="code-row">
+        <div class="input-group">
+          <i class="fas fa-key icon-left"></i>
+          <input type="text" id="verifyCodeInput" placeholder=" " maxlength="6" inputmode="numeric">
+          <label>Verification Code</label>
+        </div>
+        <button type="button" class="send-code-btn" id="sendCodeBtn" onclick="handleSendCode()">Send<br>Code</button>
+      </div>
+
+      <button type="submit" class="btn" id="signupBtn" style="margin-top:4px;">Sign Up</button>
+
+    </form>
+
+    <p class="switch-link">Already have an account? <a href="#" onclick="goTo(0)">Log In</a></p>
+
+  </div>
+
+</div>
+</div>
+
+<script>
+function showToast(message, type='info', duration=4000){
+  const container = document.getElementById('toastContainer');
+
+  const icons = { error:'❌', success:'✅', info:'📧' };
+
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.innerHTML = `<span>${icons[type]}</span><span>${message}</span>`;
+
+  container.appendChild(toast);
+
+  if(duration > 0){
+    setTimeout(() => removeToast(toast), duration);
+  }
+
+  return toast; 
+}
+
+function removeToast(toast){
+  if(!toast || !toast.parentNode) return;
+  toast.classList.add('removing');
+  setTimeout(() => toast.parentNode && toast.parentNode.removeChild(toast), 300);
+}
+
+function clearAllToasts(){
+  document.getElementById('toastContainer').innerHTML = '';
+}
+
+function goTo(index, keepToasts=false){
+  if(!keepToasts) clearAllToasts();
+  document.querySelectorAll('.wrapper').forEach((p, i) => {
+    p.classList.toggle('active', i === index);
+  });
+}
+
+function toggleEye(inputId, iconId){
+  const input = document.getElementById(inputId);
+  const icon  = document.getElementById(iconId);
+  if(input.type === 'password'){
+    input.type = 'text';
+    icon.classList.replace('fa-eye','fa-eye-slash');
+  } else {
+    input.type = 'password';
+    icon.classList.replace('fa-eye-slash','fa-eye');
+  }
+}
+
+document.getElementById('verifyCodeInput').addEventListener('input', function(){
+  this.value = this.value.replace(/[^0-9]/g,'');
+});
+
+function getCode(){ return document.getElementById('verifyCodeInput').value; }
+function clearCodeInputs(){ document.getElementById('verifyCodeInput').value = ''; }
+
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = localStorage.getItem('rap_email');
+  if(saved){
+    document.getElementById('emailLogin').value = saved;
+    document.getElementById('rememberMe').checked = true;
+  }
+});
+
+document.getElementById("loginForm").onsubmit = async function(e){
+  e.preventDefault();
+  clearAllToasts();
+  const btn = document.getElementById('loginBtn');
+  btn.disabled=true; btn.textContent='Logging in...';
+
+  const email = document.getElementById("emailLogin").value;
+  if(document.getElementById('rememberMe').checked){
+    localStorage.setItem('rap_email', email);
+  } else {
+    localStorage.removeItem('rap_email');
+  }
+
+  const form = new FormData();
+  form.append('email',    email);
+  form.append('password', document.getElementById("passwordLogin").value);
+
+  try{
+    const res  = await fetch('login.php', {method:'POST', body:form});
+    const data = await res.json();
+    if(data.success){
+      showToast('Login successful! Redirecting…', 'success', 2000);
+      setTimeout(() => window.location.href = 'dashboard.html', 1200);
+    } else {
+      showToast(data.message || 'Invalid email or password.', 'error');
+      document.getElementById("passwordLogin").value = '';
+      btn.disabled=false; btn.textContent='Log In';
+    }
+  } catch(err){
+    showToast('Connection error. Is the PHP server running?', 'error');
+    btn.disabled=false; btn.textContent='Log In';
+  }
+};
+
+let pendingSignupData = null;
+let codeSent          = false;
+let countdownTimer    = null;   
+function resetSignupForm(){
+  document.getElementById('signupForm').reset();
+  clearCodeInputs();
+  codeSent         = false;
+  pendingSignupData = null;
+
+  if(countdownTimer){ clearInterval(countdownTimer); countdownTimer = null; }
+
+  const signupBtn = document.getElementById('signupBtn');
+  signupBtn.disabled    = false;
+  signupBtn.textContent = 'Sign Up';
+
+  const sendBtn = document.getElementById('sendCodeBtn');
+  sendBtn.disabled  = false;
+  sendBtn.innerHTML = 'Send<br>Code';
+}
+
+function startResendCountdown(){
+  const btn = document.getElementById('sendCodeBtn');
+  let seconds = 60;
+  btn.disabled  = true;
+  btn.innerHTML = `${seconds}s`;
+
+  countdownTimer = setInterval(() => {
+    seconds--;
+    if(seconds > 0){
+      btn.innerHTML = `${seconds}s`;
+    } else {
+      clearInterval(countdownTimer);
+      countdownTimer = null;
+      btn.disabled  = false;
+      btn.innerHTML = 'Resend<br>Code';
+      btn.onclick = resendCode;
+    }
+  }, 1000);
+}
+
+async function handleSendCode(){
+  clearAllToasts();
+
+  const firstName = document.getElementById('signupFirstName').value.trim();
+  const lastName  = document.getElementById('signupLastName').value.trim();
+  const email     = document.getElementById('signupEmail').value.trim();
+  const password  = document.getElementById('signupPassword').value;
+
+  if(!firstName || !lastName || !email || !password){
+    showToast('Please fill in all required fields first.', 'error');
+    return;
+  }
+
+  pendingSignupData = {
+    full_name: firstName + ' ' + lastName,
+    email,
+    phone:    document.getElementById('signupPhone').value,
+    password,
+  };
+
+  await sendVerificationCode();
+}
+
+async function resendCode(){
+  if(!pendingSignupData) return;
+  clearAllToasts();
+  clearCodeInputs();
+  codeSent = false;
+  document.getElementById('sendCodeBtn').onclick = handleSendCode;
+  await sendVerificationCode();
+}
+
+document.getElementById("signupForm").onsubmit = async function(e){
+  e.preventDefault();
+  if(!codeSent){
+    showToast('Please send the verification code to your email first.', 'error');
+    return;
+  }
+  submitVerify();
+};
+
+async function sendVerificationCode(){
+  clearAllToasts();
+  const btn = document.getElementById('sendCodeBtn');
+  btn.disabled  = true;
+  btn.innerHTML = 'Sending...';
+
+  const form = new FormData();
+  form.append('full_name', pendingSignupData.full_name);
+  form.append('email',     pendingSignupData.email);
+  form.append('phone',     pendingSignupData.phone);
+  form.append('password',  pendingSignupData.password);
+
+  try{
+    const res  = await fetch('send_verification.php', {method:'POST', body:form});
+    const data = await res.json();
+
+    if(data.success){
+      clearCodeInputs();
+      codeSent = true;
+      showToast('Verification code sent to ' + pendingSignupData.email, 'info', 6000);
+      document.getElementById('verifyCodeInput').focus();
+      startResendCountdown();   
+    } else {
+      showToast(data.message || 'Could not send code.', 'error');
+      btn.disabled  = false;
+      btn.innerHTML = 'Send<br>Code';
+    }
+  } catch(err){
+    showToast('Connection error. Is the PHP server running?', 'error');
+    btn.disabled  = false;
+    btn.innerHTML = 'Send<br>Code';
+  }
+}
+
+async function submitVerify(){
+  const code = getCode();
+  clearAllToasts();
+
+  if(code.length < 6){
+    showToast('Please enter the full 6-digit code.', 'error');
+    return;
+  }
+  if(!pendingSignupData){
+    showToast('Session lost. Please fill the form and send the code again.', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('signupBtn');
+  btn.disabled    = true;
+  btn.textContent = 'Verifying...';
+
+  const vForm = new FormData();
+  vForm.append('email', pendingSignupData.email);
+  vForm.append('code',  code);
+
+  try{
+    const vRes  = await fetch('verify_code.php', {method:'POST', body:vForm});
+    const vData = await vRes.json();
+
+    if(vData.success){
+      showToast('Account created successfully! Please log in.', 'success', 7000);
+      resetSignupForm();          
+    } else {
+      showToast(vData.message, 'error');
+      clearCodeInputs();
+      btn.disabled    = false;
+      btn.textContent = 'Sign Up';
+    }
+  } catch(err){
+    showToast('Connection error. Is the PHP server running?', 'error');
+    btn.disabled    = false;
+    btn.textContent = 'Sign Up';
+  }
+}
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ride A Pedal - Profile</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+    body{min-height:100vh;background:linear-gradient(to bottom,#c5973c,#6b3e1f);padding-bottom:60px;}
+    .navbar{display:flex;justify-content:space-between;align-items:center;padding:18px 50px; background:rgba(255,255,255,0.08);backdrop-filter:blur(12px);
+      border-bottom:1px solid rgba(255,255,255,0.15);position:relative;}
+
+    .logo{font-size:20px;font-weight:700;color:white;letter-spacing:2px;text-transform:uppercase;flex-shrink:0;}
+    .nav-center{position:absolute;left:50%;transform:translateX(-50%);display:flex;}
+    .nav-links{list-style:none;display:flex;gap:30px;margin:0;}
+    .nav-links a{text-decoration:none;color:rgba(255,255,255,0.85);font-weight:400;font-size:14px;letter-spacing:0.5px;transition:color 0.25s;}
+    .nav-links a:hover{color:white;}
+    .nav-links a.active{color:rgb(0,0,0); font-weight: bold; padding-bottom:2px;}
+    .logout-btn-nav{padding:8px 22px;background:rgba(255,255,255,0.15);color:white; border:1px solid rgba(255,255,255,0.4);border-radius:25px;cursor:pointer;
+      font-weight:600;font-size:13px;letter-spacing:0.5px;transition:all 0.25s;font-family:'Poppins',sans-serif;}
+
+    .logout-btn-nav:hover{background:white;color:#2b1a0f;}
+    @media(max-width:900px){.navbar{flex-wrap:wrap;gap:10px;padding:15px 20px;}
+      .nav-center{position:static;transform:none;}
+      .nav-links{gap:12px;flex-wrap:wrap;}.nav-links a{font-size:12px;}}
+
+    .page-wrap{max-width:1000px;margin:40px auto;padding:0 24px;}
+    .profile-card{background:rgba(255,255,255,0.18);backdrop-filter:blur(18px); border-radius:30px;border:1px solid rgba(255,255,255,0.22);
+      box-shadow:0 20px 50px rgba(0,0,0,0.2);color:white;overflow:hidden;}
+
+    .avatar-strip{display:flex;align-items:center;gap:20px;padding:28px 36px;
+      background:rgba(0,0,0,0.1);border-bottom:1px solid rgba(255,255,255,0.12);}
+
+    .avatar{width:78px;height:78px;border-radius:50%;background:rgba(0,0,0,0.35); display:flex;justify-content:center;align-items:center;
+      font-size:28px;font-weight:700;border:3px solid white; box-shadow:0 6px 16px rgba(0,0,0,0.25);flex-shrink:0;}
+
+    .avatar-name{font-size:20px;font-weight:700;line-height:1.3;}
+    .avatar-since{font-size:12px;color:rgba(255,255,255,0.55);margin-top:2px;}
+    .tab-bar{display:grid;grid-template-columns:1fr 1fr;border-bottom:1px solid rgba(255,255,255,0.12);}
+    .tab-btn{padding:16px;text-align:center;font-size:14px;font-weight:600; color:rgba(255,255,255,0.55);cursor:pointer;background:transparent;border:none;
+      font-family:'Poppins',sans-serif;transition:.2s;border-bottom:3px solid transparent;}
+
+    .tab-btn:hover{color:white;background:rgba(255,255,255,0.05);}
+    .tab-btn.active{color:#030303;border-bottom:3px solid #47411f;background:rgba(255,215,0,0.05);}
+    .tab-panel{display:none;padding:30px 36px 36px;}
+    .tab-panel.active{display:block;}
+    .field-row{display:flex;justify-content:space-between;align-items:center; padding:13px 0;border-bottom:1px solid rgba(255,255,255,0.1);font-size:14px;}
+    .field-row:last-of-type{border-bottom:none;}
+    .field-label{color:rgb(51, 50, 50);font-weight:500;}
+    .field-val{color:rgb(0, 0, 0);font-weight:600;text-align:right;}
+    .edit-fields{display:none;}
+    .edit-group{margin-bottom:15px;}
+    .edit-group label{display:block;font-size:11px;color:rgba(255,255,255,0.58); font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;}
+    .edit-group input{width:100%;padding:11px 14px;border-radius:11px; border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.2);
+      color:white;font-size:13px;outline:none;font-family:'Poppins',sans-serif;transition:.2s;}
+
+    .edit-group input:focus{border-color:#ffd700;}
+    .edit-group input::placeholder{color:rgba(255,255,255,0.28);}
+    .section-divider{margin:24px 0 20px;padding-top:22px;border-top:1px solid rgba(255,255,255,0.15);}
+    .section-divider h3{font-size:14px;font-weight:700;color:rgba(255,255,255,0.65); text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px;}
+    .password-section{margin-top:28px;padding-top:24px;border-top:1px solid rgba(255,255,255,0.15);}
+    .password-section h3{font-size:14px;font-weight:700;color:rgba(255,255,255,0.65); text-transform:uppercase;letter-spacing:.8px;margin-bottom:16px;}
+    .pw-group{margin-bottom:14px;}
+    .pw-group label{display:block;font-size:11px;color:rgba(255,255,255,0.58); font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.6px;} 
+    .pw-group input{width:100%;padding:11px 14px;border-radius:11px; border:1px solid rgba(255,255,255,0.2);background:rgba(0,0,0,0.2);
+      color:white;font-size:13px;outline:none;font-family:'Poppins',sans-serif;transition:.2s;}
+
+    .pw-group input:focus{border-color:#ffd700;}
+    .pw-group input::placeholder{color:rgba(255,255,255,0.28);}
+    .btn-save-pw{padding:11px 28px;border-radius:20px;border:none; background:#ffd700;color:#1a0f08;font-weight:700;font-size:13px;cursor:pointer;
+      transition:.2s;font-family:'Poppins',sans-serif;margin-top:4px;}
+
+    .btn-save-pw:hover{background:white;}
+    .pw-msg{font-size:13px;margin-top:12px;display:none;font-weight:600; padding:10px 14px;border-radius:10px;}
+    .pw-msg.ok {background:rgba(40,167,69,.18);color:#afffcc;}
+    .pw-msg.err{background:rgba(220,53,69,.18);color:#ffaaaa;}
+    .profile-btns{margin-top:22px;display:flex;gap:10px;flex-wrap:wrap;}
+    .btn-edit-toggle{padding:11px 24px;border-radius:20px;border:2px solid rgba(255,255,255,0.32); background:transparent;color:white;font-weight:600;font-size:13px;cursor:pointer;
+      transition:.2s;font-family:'Poppins',sans-serif;}
+
+    .btn-edit-toggle:hover{background:rgba(255,255,255,0.1);}
+    .btn-save-profile{padding:11px 24px;border-radius:20px;border:none; background:#ffd700;color:#1a0f08;font-weight:700;font-size:13px;cursor:pointer;
+      transition:.2s;display:none;font-family:'Poppins',sans-serif;}
+
+    .btn-save-profile:hover{background:white;}
+    .btn-cancel-edit{padding:11px 24px;border-radius:20px; border:2px solid rgba(255,120,120,0.4);background:transparent;
+      color:#ffaaaa;font-weight:600;font-size:13px;cursor:pointer; transition:.2s;display:none;font-family:'Poppins',sans-serif;}
+
+    .btn-cancel-edit:hover{background:rgba(255,0,0,0.08);}
+    .save-msg{font-size:13px;margin-top:14px;display:none;font-weight:600; padding:10px 14px;border-radius:10px;}
+    .save-msg.ok {background:rgba(40,167,69,.18);color:#afffcc;}
+    .save-msg.err{background:rgba(220,53,69,.18);color:#ffaaaa;}
+    .history-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+    .history-meta span{font-size:12px;color:rgba(255,255,255,0.48);}
+    .table-scroll{overflow-x:auto;}
+    .history-table{width:100%;border-collapse:collapse;}
+    .history-table th{background:rgba(0,0,0,0.28);padding:11px 14px;text-align:left; font-size:12px;color:#ffd700;white-space:nowrap;font-weight:600;}
+    .history-table th:first-child{border-radius:10px 0 0 10px;}
+    .history-table th:last-child{border-radius:0 10px 10px 0;}
+    .history-table td{padding:12px 14px;border-bottom:1px solid rgba(255,255,255,0.08); font-size:13px;white-space:nowrap;}
+    .history-table tr:last-child td{border-bottom:none;}
+    .history-table tr:hover td{background:rgba(255,255,255,0.04);}
+    .txn-id{color:#f0f0f0;font-weight:700;font-family:monospace;font-size:12px;}
+    .pay-badge{background:rgba(255,255,255,0.1);padding:3px 10px;border-radius:10px;font-size:11px;font-weight:600;}
+    .status-confirmed{background:rgba(40,167,69,.25);color:#afffcc;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;}
+    .status-completed{background:rgba(23,162,184,.25);color:#adefff;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;}
+    .status-cancelled{background:rgba(220,53,69,.25);color:#ffaaaa;padding:3px 10px;border-radius:10px;font-size:11px;font-weight:700;}
+    .no-bookings{text-align:center;padding:40px;color:rgba(255,255,255,0.4);font-size:13px;}
+    .no-bookings a{color:#ffd700;text-decoration:none;}
+
+    @media(max-width:700px){.tab-panel{padding:20px 16px 26px;}.avatar-strip{padding:20px 16px;}}
+  </style>
+</head>
+<body>
+  <nav class="navbar">
+    <div class="logo">Ride A Pedal</div>
+    <div class="nav-center">
+      <ul class="nav-links">
+        <li><a href="dashboard.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="reservation.html">Reservation</a></li>
+        <li><a href="Profile.html" class="active">Profile</a></li>
+        <li><a href="support.html">Support</a></li>
+      </ul>
+    </div>
+    <button class="logout-btn-nav" id="logoutBtn">Log out</button>
+  </nav>
+
+  <div class="page-wrap">
+    <div class="profile-card">
+
+      <div class="avatar-strip">
+        <div class="avatar" id="avatarEl">?</div>
+        <div>
+          <div class="avatar-name"  id="avatarName">—</div>
+        </div>
+      </div>
+
+      <div class="tab-bar">
+        <button class="tab-btn active" id="tabInfo"    onclick="switchTab('info')">My Information</button>
+        <button class="tab-btn"        id="tabHistory" onclick="switchTab('history')">History</button>
+      </div>
+
+      <div class="tab-panel active" id="panelInfo">
+
+        <div id="viewFields">
+          <div class="field-row"><span class="field-label">Full Name:</span><span class="field-val" id="vName">—</span></div>
+          <div class="field-row"><span class="field-label">Username:</span><span class="field-val" id="vUsername">—</span></div>
+          <div class="field-row"><span class="field-label">Email:</span><span class="field-val" id="vEmail">—</span></div>
+          <div class="field-row"><span class="field-label">Mobile:</span><span class="field-val" id="vPhone">—</span></div>
+        </div>
+
+        <div class="edit-fields" id="editFields">
+          <div class="edit-group"><label>Full Name</label><input type="text"  id="eName"     placeholder="Full name"></div>
+          <div class="edit-group"><label>Username</label><input  type="text"  id="eUsername" placeholder="Username"></div>
+          <div class="edit-group"><label>Email</label><input     type="email" id="eEmail"    placeholder="Email address"></div>
+          <div class="edit-group"><label>Mobile</label><input     type="tel"   id="ePhone"    placeholder="Phone number"></div>
+        </div>
+
+        <div class="save-msg" id="saveMsg"></div>
+
+        <div class="profile-btns">
+          <button class="btn-edit-toggle" id="btnEditToggle" onclick="toggleEdit()">✏️ Edit Profile</button>
+          <button class="btn-save-profile" id="btnSave"      onclick="saveProfile()">💾 Save Changes</button>
+          <button class="btn-cancel-edit"  id="btnCancel"    onclick="cancelEdit()">✕ Cancel</button>
+        </div>
+
+        <div class="password-section">
+          <h3>🔒 Change Password</h3>
+          <div class="pw-group">
+            <label>New Password</label>
+            <input type="password" id="pwNew" placeholder="Enter new password">
+          </div>
+          <div class="pw-group">
+            <label>Confirm New Password</label>
+            <input type="password" id="pwConfirm" placeholder="Re-enter new password">
+          </div>
+          <button class="btn-save-pw" onclick="savePassword()">🔑 Update Password</button>
+          <div class="pw-msg" id="pwMsg"></div>
+        </div>
+
+      </div>
+
+      <div class="tab-panel" id="panelHistory">
+        <div class="history-meta">
+          <span>Your reservation records</span>
+          <span id="bookingCount"></span>
+        </div>
+        <div class="table-scroll">
+          <table class="history-table">
+            <thead>
+              <tr>
+                <th>ORDER ID</th>
+                <th>Bike</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Payment</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody id="historyBody">
+              <tr><td colspan="7" class="no-bookings">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    let currentUser = null;
+
+    function switchTab(tab){
+      document.getElementById('panelInfo').classList.toggle('active',    tab==='info');
+      document.getElementById('panelHistory').classList.toggle('active', tab==='history');
+      document.getElementById('tabInfo').classList.toggle('active',      tab==='info');
+      document.getElementById('tabHistory').classList.toggle('active',   tab==='history');
+    }
+
+    async function loadProfile(){
+      try{
+        const res  = await fetch('getprofile.php');
+        const data = await res.json();
+        if(!data.success){ if(data.redirect) window.location.href=data.redirect; return; }
+        currentUser = data.user;
+        renderUser(currentUser);
+        renderHistory(data.reservations||[]);
+      }catch(e){ document.getElementById('vName').textContent='Could not load profile.'; }
+    }
+
+    function renderUser(u){
+      const initials = u.full_name.split(' ').map(w=>w[0]).join('').substring(0,2).toUpperCase();
+      document.getElementById('avatarEl').textContent   = initials;
+      document.getElementById('avatarName').textContent = u.full_name;
+      const d=new Date(u.created_at);
+      const mo=['January','February','March','April','May','June','July','August','September','October','November','December'];
+      document.getElementById('vName').textContent     = u.full_name;
+      document.getElementById('vUsername').textContent = u.username;
+      document.getElementById('vEmail').textContent    = u.email;
+      document.getElementById('vPhone').textContent    = u.phone||'Not provided';
+    }
+
+    function renderHistory(list){
+      const tbody=document.getElementById('historyBody');
+      const count=document.getElementById('bookingCount');
+      if(!list.length){
+        tbody.innerHTML=`<tr><td colspan="7" class="no-bookings">No reservations yet. <a href="reservation.html">Book a bike!</a></td></tr>`;
+        count.textContent=''; return;
+      }
+      count.textContent=list.length+' booking'+(list.length>1?'s':'');
+      tbody.innerHTML='';
+      list.forEach(r=>{
+        const date  =new Date(r.ride_date+'T00:00:00').toLocaleDateString('en-PH',{year:'numeric',month:'short',day:'numeric'});
+        const amount='₱'+parseFloat(r.amount).toLocaleString('en-PH',{minimumFractionDigits:2});
+        const pay   =r.payment_method||'—';
+        const status=r.status.charAt(0).toUpperCase()+r.status.slice(1);
+        tbody.innerHTML+=`
+          <tr>
+            <td><span class="txn-id">${r.transaction_id}</span></td>
+            <td>${r.bike_name}</td>
+            <td>${date}</td>
+            <td>${r.ride_time}</td>
+            <td><span class="pay-badge">${pay}</span></td>
+            <td>${amount}</td>
+            <td><span class="status-${r.status}">${status}</span></td>
+          </tr>`;
+      });
+    }
+
+    function toggleEdit(){
+      document.getElementById('eName').value     = currentUser.full_name;
+      document.getElementById('eUsername').value = currentUser.username;
+      document.getElementById('eEmail').value    = currentUser.email;
+      document.getElementById('ePhone').value    = currentUser.phone||'';
+      document.getElementById('viewFields').style.display    = 'none';
+      document.getElementById('editFields').style.display    = 'block';
+      document.getElementById('btnEditToggle').style.display = 'none';
+      document.getElementById('btnSave').style.display       = 'block';
+      document.getElementById('btnCancel').style.display     = 'block';
+      hideSaveMsg();
+    }
+
+    function cancelEdit(){
+      document.getElementById('viewFields').style.display    = 'block';
+      document.getElementById('editFields').style.display    = 'none';
+      document.getElementById('btnEditToggle').style.display = 'block';
+      document.getElementById('btnSave').style.display       = 'none';
+      document.getElementById('btnCancel').style.display     = 'none';
+      hideSaveMsg();
+    }
+
+    async function saveProfile(){
+      const btn=document.getElementById('btnSave');
+      btn.disabled=true; btn.textContent='Saving...';
+      hideSaveMsg();
+      const form=new FormData();
+      form.append('full_name', document.getElementById('eName').value.trim());
+      form.append('username',  document.getElementById('eUsername').value.trim());
+      form.append('email',     document.getElementById('eEmail').value.trim());
+      form.append('phone',     document.getElementById('ePhone').value.trim());
+      try{
+        const res=await fetch('update_profile.php',{method:'POST',body:form});
+        const data=await res.json();
+        if(data.success){
+          currentUser.full_name=document.getElementById('eName').value.trim();
+          currentUser.username =document.getElementById('eUsername').value.trim();
+          currentUser.email    =document.getElementById('eEmail').value.trim();
+          currentUser.phone    =document.getElementById('ePhone').value.trim();
+          renderUser(currentUser);
+          showSaveMsg('Profile updated successfully!',true);
+          cancelEdit();
+        }else{ showSaveMsg(data.message||'Update failed.',false); }
+      }catch(e){ showSaveMsg('Connection error. Is the PHP server running?',false); }
+      btn.disabled=false; btn.textContent='💾 Save Changes';
+    }
+
+    function showSaveMsg(msg,ok){
+      const el=document.getElementById('saveMsg');
+      el.textContent=(ok?'✅ ':'❌ ')+msg;
+      el.className='save-msg '+(ok?'ok':'err');
+      el.style.display='block';
+      if(ok) setTimeout(hideSaveMsg,3500);
+    }
+    function hideSaveMsg(){ document.getElementById('saveMsg').style.display='none'; }
+
+    async function savePassword(){
+      const newPw  = document.getElementById('pwNew').value;
+      const confirm= document.getElementById('pwConfirm').value;
+      const msgEl  = document.getElementById('pwMsg');
+      msgEl.style.display='none';
+
+      if(!newPw){
+        msgEl.textContent='❌ Please enter a new password.';
+        msgEl.className='pw-msg err'; msgEl.style.display='block'; return;
+      }
+      if(newPw !== confirm){
+        msgEl.textContent='❌ Passwords do not match.';
+        msgEl.className='pw-msg err'; msgEl.style.display='block'; return;
+      }
+
+      const btn=document.querySelector('.btn-save-pw');
+      btn.disabled=true; btn.textContent='Saving...';
+
+      const form=new FormData();
+      form.append('full_name', currentUser.full_name);
+      form.append('username',  currentUser.username);
+      form.append('email',     currentUser.email);
+      form.append('phone',     currentUser.phone||'');
+      form.append('password',  newPw);
+
+      try{
+        const res =await fetch('update_profile.php',{method:'POST',body:form});
+        const data=await res.json();
+        if(data.success){
+          msgEl.textContent='✅ Password updated successfully!';
+          msgEl.className='pw-msg ok'; msgEl.style.display='block';
+          document.getElementById('pwNew').value='';
+          document.getElementById('pwConfirm').value='';
+          setTimeout(()=>{ msgEl.style.display='none'; },3500);
+        }else{
+          msgEl.textContent='❌ '+(data.message||'Failed to update password.');
+          msgEl.className='pw-msg err'; msgEl.style.display='block';
+        }
+      }catch(e){
+        msgEl.textContent='❌ Connection error. Is the PHP server running?';
+        msgEl.className='pw-msg err'; msgEl.style.display='block';
+      }
+      btn.disabled=false; btn.textContent='🔑 Update Password';
+    }
+
+    document.getElementById('logoutBtn').addEventListener('click',async()=>{
+      try{ await fetch('logout.php'); }catch(e){}
+      localStorage.clear(); sessionStorage.clear();
+      window.location.href='main.html';
+    });
+
+    loadProfile();
+  </script>
+</body>
+</html>
